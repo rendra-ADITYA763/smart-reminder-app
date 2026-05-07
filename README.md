@@ -70,12 +70,6 @@ Karena aplikasi ini dibangun menggunakan teknologi web standar tanpa *backend* y
 3.  **Atur Jadwal Kuliah**: Masuk ke menu "College Schedule" untuk memasukkan jadwal mata kuliah mingguan Anda.
 4.  **Hapus Data**: Jika ada salah ketik, arahkan kursor ke kartu aktivitas atau jadwal, lalu klik ikon tempat sampah/tanda silang yang muncul.
 5.  **Mode Gelap**: Klik ikon bulan di pojok kanan atas untuk kenyamanan mata di malam hari.
+.
 
----
 
-## 📄 Lisensi
-
-Proyek ini dibuat untuk tujuan pembelajaran dan produktivitas pribadi. Silakan gunakan dan modifikasi sesuai kebutuhan Anda.
-
----
-*Dibuat dengan ❤️ oleh Antigravity.*
