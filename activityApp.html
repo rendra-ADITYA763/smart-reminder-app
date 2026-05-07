@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Smart Reminder Prediksi</title>
+    <script src="tailwind.config.js"></script>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="app.css" />
+</head>
+
+<body
+    class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-screen flex flex-col antialiased transition-colors duration-300">
+    <!-- TopNavBar -->
+    <nav
+        class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-md fixed top-0 w-full z-50 shadow-sm flex justify-between items-center px-8 h-20 max-w-full mx-auto font-sans tracking-tight border-b border-slate-200 dark:border-slate-800">
+        <div class="flex items-center gap-2">
+            <div class="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shadow-lg shadow-primary/20">
+                <span class="material-symbols-outlined text-white">bolt</span>
+            </div>
+            <div class="text-2xl font-black text-slate-900 dark:text-white ml-2">
+                Smart Reminder
+            </div>
+        </div>
+        <div class="hidden md:flex gap-8">
+            <a class="nav-link active text-blue-700 dark:text-blue-400 font-semibold border-b-2 border-blue-700 transition-colors active:scale-95 duration-200"
+                href="#" onclick="switchView('dashboard')">Dashboard</a>
+            <a class="nav-link text-slate-500 dark:text-slate-400 hover:text-slate-900 transition-colors active:scale-95 duration-200"
+                href="#" onclick="switchView('logs')">History</a>
+            <a class="nav-link text-slate-500 dark:text-slate-400 hover:text-slate-900 transition-colors active:scale-95 duration-200"
+                href="#" onclick="switchView('analytics')">Statistics</a>
+            <a class="nav-link text-slate-500 dark:text-slate-400 hover:text-slate-900 transition-colors active:scale-95 duration-200"
+                href="#" onclick="switchView('settings')">Settings</a>
+        </div>
+        <div class="flex items-center gap-4">
+            <button id="darkModeToggle" onclick="toggleDarkMode()"
+                class="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all">
+                <span class="material-symbols-outlined">dark_mode</span>
+            </button>
+            <button
+                class="bg-primary text-on-primary px-4 py-2 rounded-xl font-medium shadow-[0_12px_32px_rgba(25,28,29,0.04)] bg-gradient-to-br from-primary to-primary-container"
+                onclick="showAddModal()">
+                Add Habit
+            </button>
+            <div class="relative group">
+                <span
+                    class="material-symbols-outlined text-on-surface-variant cursor-pointer p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors">notifications</span>
+                <div
+                    class="absolute right-0 mt-2 w-64 bg-white dark:bg-slate-900 shadow-xl rounded-2xl border border-slate-200 dark:border-slate-800 p-4 hidden group-hover:block z-50">
+                    <h4 class="font-bold text-sm mb-2">Recent Alerts</h4>
+                    <div id="notificationList" class="text-xs space-y-2 text-slate-500">
+                        No new notifications
+                    </div>
+                </div>
+            </div>
+            <span
+                class="material-symbols-outlined text-on-surface-variant cursor-pointer p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors">account_circle</span>
+        </div>
+    </nav>
+    <!-- Main Layout -->
+    <div class="flex flex-1 pt-20 max-w-[1600px] mx-auto w-full">
+        <!-- SideNavBar -->
+        <aside
+            class="bg-slate-50 dark:bg-slate-950 h-[calc(100vh-5rem)] w-64 border-r border-slate-200 dark:border-slate-800 flex flex-col p-6 space-y-2 text-sm font-medium hidden lg:flex sticky top-20 overflow-y-auto custom-scrollbar">
+            <div class="mb-4">
+                <div class="font-bold text-lg text-slate-900 dark:text-white mb-1">Concierge</div>
+                <div class="text-on-surface-variant text-xs normal-case tracking-normal">Habit Architect v1.2</div>
+            </div>
+            <nav class="flex-1 space-y-1">
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 mt-4">Core</p>
+                <a class="sidebar-link active bg-white dark:bg-slate-900 text-blue-700 dark:text-blue-400 shadow-sm rounded-lg flex items-center gap-3 p-3 transition-all duration-300 cursor-pointer active:opacity-80"
+                    onclick="switchView('dashboard')">
+                    <span class="material-symbols-outlined">dashboard</span>
+                    Dashboard
+                </a>
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 mt-4">Services</p>
+                <a class="sidebar-link text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-900 flex items-center gap-3 p-3 transition-all duration-300 cursor-pointer active:opacity-80 rounded-lg"
+                    onclick="switchView('schedule')">
+                    <span class="material-symbols-outlined">school</span>
+                    College Schedule
+                </a>
+                <a class="sidebar-link text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-900 flex items-center gap-3 p-3 transition-all duration-300 cursor-pointer active:opacity-80 rounded-lg"
+                    onclick="switchView('events')">
+                    <span class="material-symbols-outlined">emoji_events</span>
+                    Competitions
+                </a>
+                <a class="sidebar-link text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-900 flex items-center gap-3 p-3 transition-all duration-300 cursor-pointer active:opacity-80 rounded-lg"
+                    onclick="switchView('weather')">
+                    <span class="material-symbols-outlined">partly_cloudy_day</span>
+                    Weather Concierge
+                </a>
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 mt-4">Admin</p>
+                <a class="sidebar-link text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-900 flex items-center gap-3 p-3 transition-all duration-300 cursor-pointer active:opacity-80 rounded-lg"
+                    onclick="switchView('analytics')">
+                    <span class="material-symbols-outlined">insights</span>
+                    Analytics
+                </a>
+                <a class="sidebar-link text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-900 flex items-center gap-3 p-3 transition-all duration-300 cursor-pointer active:opacity-80 rounded-lg"
+                    onclick="switchView('logs')">
+                    <span class="material-symbols-outlined">history</span>
+                    Logs
+                </a>
+                <a class="sidebar-link text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-900 flex items-center gap-3 p-3 transition-all duration-300 cursor-pointer active:opacity-80 rounded-lg"
+                    onclick="switchView('settings')">
+                    <span class="material-symbols-outlined">settings</span>
+                    Settings
+                </a>
+            </nav>
+            <button
+                class="w-full bg-primary/10 text-primary py-3 rounded-xl font-bold mt-6 hover:bg-primary/20 transition-colors flex items-center justify-center gap-2"
+                onclick="generatePrediction()">
+                <span class="material-symbols-outlined text-sm">auto_awesome</span>
+                New Prediction
+            </button>
+        </aside>
+        <!-- Content Area -->
+        <main class="flex-1 p-8 lg:p-12 overflow-y-auto bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
+            <div id="view-dashboard" class="view-content">
+                <header class="mb-16 max-w-4xl">
+                    <h1 class="text-5xl lg:text-6xl font-headline font-black tracking-[-0.04em] text-on-surface mb-4 dark:text-white"
+                        id="greetingText">
+                        Good Morning.
+                    </h1>
+                    <p class="text-xl text-on-surface-variant max-w-2xl leading-relaxed dark:text-slate-400">
+                        Here is your digital concierge for daily habits. We predict and organize so you can focus on
+                        execution.
+                    </p>
+                </header>
+                <div class="grid grid-cols-1 xl:grid-cols-12 gap-12">
+                    <!-- Left Column: User Panel -->
+                    <div class="xl:col-span-7 space-y-12">
+                        <!-- Form Section -->
+                        <section
+                            class="bg-white dark:bg-slate-900 p-8 rounded-[2rem] shadow-sm border border-slate-100 dark:border-slate-800">
+                            <h2
+                                class="text-sm font-label font-bold uppercase tracking-[0.1em] text-on-surface-variant mb-6 dark:text-slate-500">
+                                User Panel</h2>
+                            <div
+                                class="bg-slate-50 dark:bg-slate-800/50 p-8 rounded-2xl relative overflow-hidden group border border-slate-100 dark:border-slate-800">
+                                <div class="flex flex-col sm:flex-row gap-6 items-end">
+                                    <div class="flex-1 w-full">
+                                        <label
+                                            class="block text-xs font-medium text-on-surface-variant mb-2 dark:text-slate-400">Aktivitas</label>
+                                        <input
+                                            class="w-full bg-transparent border-0 border-b border-slate-200 dark:border-slate-700 focus:ring-0 focus:border-b-2 focus:border-primary px-0 py-2 text-on-surface dark:text-white placeholder:text-slate-400 transition-all"
+                                            id="activityInput" placeholder="e.g. Read a book" type="text" />
+                                    </div>
+                                    <div class="w-full sm:w-32">
+                                        <label
+                                            class="block text-xs font-medium text-on-surface-variant mb-2 dark:text-slate-400">Jam
+                                            (0-23)</label>
+                                        <input
+                                            class="w-full bg-transparent border-0 border-b border-slate-200 dark:border-slate-700 focus:ring-0 focus:border-b-2 focus:border-primary px-0 py-2 text-on-surface dark:text-white placeholder:text-slate-400 transition-all text-center"
+                                            id="hourInput" max="23" min="0" placeholder="08" type="number" />
+                                    </div>
+                                    <button
+                                        class="w-full sm:w-auto bg-gradient-to-br from-primary to-primary-container text-on-primary px-8 py-3 rounded-xl font-medium shadow-lg shadow-primary/20 hover:scale-105 transition-transform whitespace-nowrap"
+                                        onclick="addHabit()">
+                                        Tambah Kebiasaan
+                                    </button>
+                                </div>
+                                <!-- Rekomendasi Area -->
+                                <div class="mt-6 pt-6 border-t border-slate-200 dark:border-slate-700 hidden"
+                                    id="recommendationArea">
+                                    <p
+                                        class="text-sm text-on-surface-variant dark:text-slate-400 flex items-center gap-2">
+                                        <span class="material-symbols-outlined text-primary text-sm"
+                                            style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+                                        <span id="recommendationText">Rekomendasi: ...</span>
+                                    </p>
+                                </div>
+                            </div>
+                        </section>
+                        <!-- User List Section -->
+                        <section>
+                            <div
+                                class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 ml-4">
+                                <h3
+                                    class="text-sm font-label font-bold uppercase tracking-[0.1em] text-on-surface-variant dark:text-slate-500">
+                                    Daftar Kebiasaan</h3>
+                                <div class="relative w-full sm:w-64">
+                                    <span
+                                        class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">search</span>
+                                    <input type="text" id="habitSearch" placeholder="Search habits..."
+                                        class="w-full pl-10 pr-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-xs focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                                        oninput="renderUserList()">
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="userHabitList">
+                                <!-- Populated by JS -->
+                            </div>
+                        </section>
+                    </div>
+                    <!-- Right Column: Quick Stats -->
+                    <div class="xl:col-span-5 space-y-8">
+                        <!-- Weather Widget -->
+                        <section
+                            class="bg-gradient-to-br from-blue-600 to-blue-400 p-8 rounded-[2rem] shadow-xl text-white relative overflow-hidden group">
+                            <div
+                                class="absolute -right-10 -top-10 opacity-20 group-hover:rotate-12 transition-transform duration-700">
+                                <span class="material-symbols-outlined text-[12rem]"
+                                    id="dashWeatherIconLarge">sunny</span>
+                            </div>
+                            <div class="relative z-10">
+                                <div class="flex justify-between items-start mb-12">
+                                    <div>
+                                        <h3 class="text-3xl font-black" id="dashTemp">--°C</h3>
+                                        <p class="text-xs font-bold uppercase tracking-widest text-blue-100"
+                                            id="dashCondition">Loading Weather...</p>
+                                    </div>
+                                    <span class="material-symbols-outlined text-4xl" id="dashWeatherIcon">cloud</span>
+                                </div>
+                                <div class="flex gap-6">
+                                    <div class="flex-1 bg-white/20 backdrop-blur-md p-4 rounded-2xl">
+                                        <p class="text-[10px] font-bold text-blue-100 uppercase mb-1">Humidity</p>
+                                        <p class="text-lg font-bold" id="dashHumidity">--%</p>
+                                    </div>
+                                    <div class="flex-1 bg-white/20 backdrop-blur-md p-4 rounded-2xl">
+                                        <p class="text-[10px] font-bold text-blue-100 uppercase mb-1">Wind Speed</p>
+                                        <p class="text-lg font-bold" id="dashWind">-- km/h</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <section
+                            class="bg-white dark:bg-slate-900 p-8 rounded-[2rem] shadow-sm border border-slate-100 dark:border-slate-800">
+                            <div class="flex justify-between items-center mb-8">
+                                <h2
+                                    class="text-sm font-label font-bold uppercase tracking-[0.1em] text-on-surface-variant dark:text-slate-500">
+                                    Activity Completion</h2>
+                                <span class="material-symbols-outlined text-primary">analytics</span>
+                            </div>
+                            <div class="space-y-6">
+                                <div class="flex justify-between items-end">
+                                    <div>
+                                        <p class="text-3xl font-black text-slate-900 dark:text-white"
+                                            id="totalHabitsCount">0</p>
+                                        <p class="text-xs text-slate-400 uppercase tracking-widest font-bold">Total
+                                            Habits</p>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="text-3xl font-black text-green-500" id="completionRate">0%</p>
+                                        <p class="text-xs text-slate-400 uppercase tracking-widest font-bold">Completion
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="h-2 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                                    <div id="completionBar" class="h-full bg-primary transition-all duration-1000"
+                                        style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- Upcoming Event Widget -->
+                        <section
+                            class="bg-white dark:bg-slate-900 p-8 rounded-[2rem] shadow-sm border border-slate-100 dark:border-slate-800">
+                            <h3 class="text-xs font-bold uppercase text-slate-400 mb-6 tracking-widest">Next Competition
+                            </h3>
+                            <div id="nextEventWidget"
+                                class="p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl flex items-center gap-4">
+                                <span class="material-symbols-outlined text-3xl text-primary">emoji_events</span>
+                                <div>
+                                    <p class="font-bold dark:text-white" id="nextEventName">No events scheduled</p>
+                                    <p class="text-xs text-slate-400" id="nextEventDate">-</p>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            </div>
+
+            <!-- College Schedule View -->
+            <div id="view-schedule" class="view-content hidden">
+                <header class="mb-12">
+                    <h2 class="text-4xl font-black text-slate-900 dark:text-white mb-2">College Schedule</h2>
+                    <p class="text-slate-500">Organize your academic journey with precision.</p>
+                </header>
+                <div class="grid grid-cols-1 xl:grid-cols-12 gap-12">
+                    <div class="xl:col-span-4 space-y-6">
+                        <section
+                            class="bg-white dark:bg-slate-900 p-8 rounded-[2rem] border border-slate-100 dark:border-slate-800">
+                            <h3 class="font-bold mb-6">Add Class</h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="text-[10px] font-bold text-slate-400 uppercase">Subject</label>
+                                    <input type="text" id="schedSubject"
+                                        class="w-full bg-slate-50 dark:bg-slate-800 border-0 rounded-xl px-4 py-3"
+                                        placeholder="e.g. Data Structures">
+                                </div>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="text-[10px] font-bold text-slate-400 uppercase">Day</label>
+                                        <select id="schedDay"
+                                            class="w-full bg-slate-50 dark:bg-slate-800 border-0 rounded-xl px-4 py-3">
+                                            <option>Monday</option>
+                                            <option>Tuesday</option>
+                                            <option>Wednesday</option>
+                                            <option>Thursday</option>
+                                            <option>Friday</option>
+                                            <option>Saturday</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="text-[10px] font-bold text-slate-400 uppercase">Time</label>
+                                        <input type="time" id="schedTime"
+                                            class="w-full bg-slate-50 dark:bg-slate-800 border-0 rounded-xl px-4 py-3">
+                                    </div>
+                                </div>
+                                <button onclick="addClass()"
+                                    class="w-full bg-primary text-white py-4 rounded-xl font-bold shadow-lg shadow-primary/20">Add
+                                    to Schedule</button>
+                            </div>
+                        </section>
+                    </div>
+                    <div class="xl:col-span-8">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" id="scheduleGrid">
+                            <!-- Day columns will be here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Competition Events View -->
+            <div id="view-events" class="view-content hidden">
+                <header class="mb-12">
+                    <h2 class="text-4xl font-black text-slate-900 dark:text-white mb-2">Competitions</h2>
+                    <p class="text-slate-500">Track your matches, tournaments, and achievements.</p>
+                </header>
+                <div class="grid grid-cols-1 xl:grid-cols-12 gap-12">
+                    <div class="xl:col-span-4 space-y-6">
+                        <section
+                            class="bg-white dark:bg-slate-900 p-8 rounded-[2rem] border border-slate-100 dark:border-slate-800">
+                            <h3 class="font-bold mb-6">New Event</h3>
+                            <div class="space-y-4">
+                                <input type="text" id="eventName" placeholder="Event/Match Name"
+                                    class="w-full bg-slate-50 dark:bg-slate-800 border-0 rounded-xl px-4 py-3">
+                                <input type="date" id="eventDate"
+                                    class="w-full bg-slate-50 dark:bg-slate-800 border-0 rounded-xl px-4 py-3">
+                                <input type="text" id="eventLoc" placeholder="Location/Platform"
+                                    class="w-full bg-slate-50 dark:bg-slate-800 border-0 rounded-xl px-4 py-3">
+                                <button onclick="addEvent()"
+                                    class="w-full bg-primary text-white py-4 rounded-xl font-bold">Register
+                                    Event</button>
+                            </div>
+                        </section>
+                    </div>
+                    <div class="xl:col-span-8">
+                        <div
+                            class="bg-white dark:bg-slate-900 rounded-[2rem] border border-slate-100 dark:border-slate-800 overflow-hidden">
+                            <table class="w-full text-left">
+                                <thead
+                                    class="bg-slate-50 dark:bg-slate-800 text-[10px] font-bold uppercase text-slate-400">
+                                    <tr>
+                                        <th class="p-6">Event</th>
+                                        <th class="p-6">Date</th>
+                                        <th class="p-6">Location</th>
+                                        <th class="p-6">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="eventTableBody" class="divide-y divide-slate-100 dark:divide-slate-800">
+                                    <!-- Rows here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Weather Concierge View -->
+            <div id="view-weather" class="view-content hidden">
+                <header class="mb-12">
+                    <h2 class="text-4xl font-black text-slate-900 dark:text-white mb-2">Weather Concierge</h2>
+                    <p class="text-slate-500">Smart weather-aware activity recommendations.</p>
+                </header>
+                <div class="grid grid-cols-1 xl:grid-cols-12 gap-12">
+                    <div class="xl:col-span-5 space-y-8">
+                        <section
+                            class="bg-white dark:bg-slate-900 p-8 rounded-[2rem] border border-slate-100 dark:border-slate-800">
+                            <h3 class="font-bold mb-6">Current Location</h3>
+                            <div class="flex items-center gap-4 p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl mb-6">
+                                <span class="material-symbols-outlined text-primary">location_on</span>
+                                <div>
+                                    <p class="font-bold dark:text-white" id="weatherCity">Jakarta, ID</p>
+                                    <p class="text-xs text-slate-400">Automatic Geolocation</p>
+                                </div>
+                            </div>
+                            <div class="space-y-4">
+                                <button onclick="updateWeather()"
+                                    class="w-full bg-primary text-white py-4 rounded-xl font-bold flex items-center justify-center gap-2">
+                                    <span class="material-symbols-outlined text-sm">refresh</span>
+                                    Update Weather
+                                </button>
+                            </div>
+                        </section>
+                        <section
+                            class="bg-blue-50 dark:bg-blue-900/20 p-8 rounded-[2rem] border border-blue-100 dark:border-blue-800/30">
+                            <h3 class="font-bold text-blue-800 dark:text-blue-300 mb-4 flex items-center gap-2">
+                                <span class="material-symbols-outlined text-sm">info</span>
+                                Smart Context
+                            </h3>
+                            <p class="text-sm text-blue-700/80 dark:text-blue-400/80 leading-relaxed">
+                                I'm monitoring the skies. If you plan outdoor activities like <span
+                                    class="font-bold">"lari"</span> or <span class="font-bold">"sepeda"</span>, I'll
+                                alert you if conditions aren't optimal.
+                            </p>
+                        </section>
+                    </div>
+                    <div class="xl:col-span-7">
+                        <div
+                            class="bg-white dark:bg-slate-900 p-8 rounded-[2rem] border border-slate-100 dark:border-slate-800 h-full">
+                            <h3 class="font-bold mb-8">7-Day Forecast</h3>
+                            <div class="space-y-4" id="weatherForecast">
+                                <!-- Forecast items here -->
+                                <div class="animate-pulse flex gap-4 p-4">
+                                    <div class="w-12 h-12 bg-slate-100 dark:bg-slate-800 rounded-xl"></div>
+                                    <div class="flex-1 space-y-2">
+                                        <div class="h-4 bg-slate-100 dark:bg-slate-800 rounded w-1/2"></div>
+                                        <div class="h-2 bg-slate-100 dark:bg-slate-800 rounded w-1/4"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="view-admin" class="view-content hidden">
+                <header class="mb-12">
+                    <h2 class="text-4xl font-black text-slate-900 dark:text-white mb-2">Management</h2>
+                    <p class="text-slate-500">Control and modify your habit data architecture.</p>
+                </header>
+                <div
+                    class="bg-white dark:bg-slate-900 rounded-[2rem] shadow-sm border border-slate-100 dark:border-slate-800 overflow-hidden">
+                    <div class="p-8 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center">
+                        <h3 class="font-bold">Habit Database</h3>
+                        <button class="text-sm text-primary font-bold hover:underline" onclick="clearAllHabits()">Clear
+                            All Data</button>
+                    </div>
+                    <div class="p-0">
+                        <div id="adminHabitTable" class="divide-y divide-slate-100 dark:divide-slate-800">
+                            <!-- Populated by JS -->
+                        </div>
+                        <div id="adminEmptyState" class="p-20 text-center">
+                            <span
+                                class="material-symbols-outlined text-6xl text-slate-200 dark:text-slate-800 mb-4">database_off</span>
+                            <p class="text-slate-400">No data entries found.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="view-analytics" class="view-content hidden">
+                <header class="mb-12">
+                    <h2 class="text-4xl font-black text-slate-900 dark:text-white mb-2">Analytics</h2>
+                    <p class="text-slate-500">Visualizing your habit distribution and patterns.</p>
+                </header>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div
+                        class="bg-white dark:bg-slate-900 p-8 rounded-[2rem] shadow-sm border border-slate-100 dark:border-slate-800">
+                        <h3 class="font-bold mb-6">Hourly Distribution</h3>
+                        <div class="h-64 flex items-end gap-2 px-2" id="hourlyChart">
+                            <!-- Bars generated by JS -->
+                        </div>
+                        <div class="flex justify-between text-[10px] text-slate-400 mt-4 px-2">
+                            <span>00:00</span>
+                            <span>12:00</span>
+                            <span>23:00</span>
+                        </div>
+                    </div>
+                    <div
+                        class="bg-white dark:bg-slate-900 p-8 rounded-[2rem] shadow-sm border border-slate-100 dark:border-slate-800">
+                        <h3 class="font-bold mb-6">Activity Frequency</h3>
+                        <div class="space-y-4" id="frequencyList">
+                            <!-- Top activities -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="view-logs" class="view-content hidden">
+                <header class="mb-12 flex justify-between items-end">
+                    <div>
+                        <h2 class="text-4xl font-black text-slate-900 dark:text-white mb-2">Activity Logs</h2>
+                        <p class="text-slate-500">Chronological history of your interactions.</p>
+                    </div>
+                    <button onclick="clearLogs()"
+                        class="text-xs font-bold text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 px-4 py-2 rounded-lg transition-colors">Clear
+                        Logs</button>
+                </header>
+                <div
+                    class="bg-white dark:bg-slate-900 rounded-[2rem] shadow-sm border border-slate-100 dark:border-slate-800 overflow-hidden">
+                    <div id="logContent"
+                        class="divide-y divide-slate-100 dark:divide-slate-800 max-h-[600px] overflow-y-auto">
+                        <!-- Logs populated by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <div id="view-settings" class="view-content hidden">
+                <header class="mb-12">
+                    <h2 class="text-4xl font-black text-slate-900 dark:text-white mb-2">Settings</h2>
+                    <p class="text-slate-500">Personalize your concierge experience.</p>
+                </header>
+                <div class="max-w-2xl space-y-8">
+                    <section
+                        class="bg-white dark:bg-slate-900 p-8 rounded-[2rem] shadow-sm border border-slate-100 dark:border-slate-800">
+                        <h3 class="font-bold mb-6">Profile</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Display
+                                    Name</label>
+                                <input type="text" id="userNameInput"
+                                    class="w-full bg-slate-50 dark:bg-slate-800 border-0 rounded-xl px-4 py-3 text-on-surface dark:text-white"
+                                    placeholder="Enter your name" onchange="updateProfile()">
+                            </div>
+                        </div>
+                    </section>
+                    <section
+                        class="bg-white dark:bg-slate-900 p-8 rounded-[2rem] shadow-sm border border-slate-100 dark:border-slate-800">
+                        <h3 class="font-bold mb-6">Preferences</h3>
+                        <div class="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl">
+                            <div class="flex items-center gap-4">
+                                <span class="material-symbols-outlined text-primary">dark_mode</span>
+                                <div>
+                                    <p class="font-bold">Dark Mode</p>
+                                    <p class="text-xs text-slate-400">Toggle application theme</p>
+                                </div>
+                            </div>
+                            <button id="settingsThemeToggle" onclick="toggleDarkMode()"
+                                class="w-12 h-6 bg-slate-200 dark:bg-primary rounded-full relative transition-colors">
+                                <div
+                                    class="absolute top-1 left-1 dark:left-7 w-4 h-4 bg-white rounded-full transition-all">
+                                </div>
+                            </button>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </main>
+    </div>
+    <!-- Footer -->
+    <footer
+        class="bg-white dark:bg-slate-900 border-t-0 bg-slate-100 dark:bg-slate-800 flat flex flex-col md:flex-row justify-between items-center py-8 px-12 mt-auto text-xs text-slate-400">
+        <div>
+            © 2024 Smart Reminder Prediksi. All rights reserved.
+        </div>
+        <div class="flex gap-6 mt-4 md:mt-0">
+            <a class="text-slate-400 hover:text-blue-500 underline-offset-4 hover:underline" href="#">Privacy Policy</a>
+            <a class="text-slate-400 hover:text-blue-500 underline-offset-4 hover:underline" href="#">Terms of
+                Service</a>
+            <a class="text-slate-400 hover:text-blue-500 underline-offset-4 hover:underline" href="#">Support</a>
+        </div>
+    </footer>
+    <script src="app.js"></script>
+</body>
+
+</html>
