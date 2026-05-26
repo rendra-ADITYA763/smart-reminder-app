@@ -207,15 +207,16 @@
         // Weather Integration Functions
         async function updateWeather() {
             try {
-                // Default coordinates (Jakarta) - can be improved with navigator.geolocation
-                const lat = -6.2088;
-                const lon = 106.8456;
-                const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=auto`);
+                // Fetch using our new PHP backend API
+                const res = await fetch('api/weather.php');
                 const data = await res.json();
+                
+                if (data.error) throw new Error(data.error);
+
                 weatherData = data;
                 localStorage.setItem('weatherData', JSON.stringify(data));
                 renderUI();
-                addLog('Weather', 'Updated real-time weather data');
+                addLog('Weather', 'Updated real-time weather data via Backend API');
             } catch (e) {
                 console.error("Weather fetch failed", e);
             }
