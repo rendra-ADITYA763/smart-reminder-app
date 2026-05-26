@@ -14,6 +14,7 @@
 <?php include 'views/analytics.php'; ?>
 <?php include 'views/logs.php'; ?>
 <?php include 'views/settings.php'; ?>
+<?php include 'views/ai.php'; ?>
         </main>
     </div>
 

@@ -20,7 +20,7 @@
                                 User Panel</h2>
                             <div
                                 class="bg-slate-50 dark:bg-slate-800/50 p-8 rounded-2xl relative overflow-hidden group border border-slate-100 dark:border-slate-800">
-                                <div class="flex flex-col sm:flex-row gap-6 items-end">
+                                <div class="flex flex-col md:flex-row gap-6 items-end w-full">
                                     <div class="flex-1 w-full">
                                         <label
                                             class="block text-xs font-medium text-on-surface-variant mb-2 dark:text-slate-400">Aktivitas</label>
@@ -28,19 +28,20 @@
                                             class="w-full bg-transparent border-0 border-b border-slate-200 dark:border-slate-700 focus:ring-0 focus:border-b-2 focus:border-primary px-0 py-2 text-on-surface dark:text-white placeholder:text-slate-400 transition-all"
                                             id="activityInput" placeholder="e.g. Read a book" type="text" />
                                     </div>
-                                    <div class="w-full sm:w-32">
+                                    <div class="w-full md:w-40 shrink-0">
                                         <label
-                                            class="block text-xs font-medium text-on-surface-variant mb-2 dark:text-slate-400">Jam
-                                            (0-23)</label>
+                                            class="block text-xs font-medium text-on-surface-variant mb-2 dark:text-slate-400 text-center md:text-left">Waktu</label>
                                         <input
-                                            class="w-full bg-transparent border-0 border-b border-slate-200 dark:border-slate-700 focus:ring-0 focus:border-b-2 focus:border-primary px-0 py-2 text-on-surface dark:text-white placeholder:text-slate-400 transition-all text-center"
-                                            id="hourInput" max="23" min="0" placeholder="08" type="number" />
+                                            class="w-full bg-transparent border-0 border-b border-slate-200 dark:border-slate-700 focus:ring-0 focus:border-b-2 focus:border-primary px-0 py-2 text-on-surface dark:text-white placeholder:text-slate-400 transition-all text-center md:text-left"
+                                            id="timeInput" type="time" />
                                     </div>
-                                    <button
-                                        class="w-full sm:w-auto bg-gradient-to-br from-primary to-primary-container text-on-primary px-8 py-3 rounded-xl font-medium shadow-lg shadow-primary/20 hover:scale-105 transition-transform whitespace-nowrap"
-                                        onclick="addHabit()">
-                                        Tambah Kebiasaan
-                                    </button>
+                                    <div class="w-full md:w-auto shrink-0">
+                                        <button
+                                            class="w-full md:w-auto bg-gradient-to-br from-primary to-primary-container text-on-primary px-8 py-3 rounded-xl font-medium shadow-lg shadow-primary/20 hover:scale-105 transition-transform whitespace-nowrap"
+                                            onclick="addHabit()">
+                                            Tambah Kebiasaan
+                                        </button>
+                                    </div>
                                 </div>
                                 <!-- Rekomendasi Area -->
                                 <div class="mt-6 pt-6 border-t border-slate-200 dark:border-slate-700 hidden"

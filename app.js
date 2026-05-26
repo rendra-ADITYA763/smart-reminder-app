@@ -1,10 +1,10 @@
         // Data Structure
-        let habits = JSON.parse(localStorage.getItem('habits')) || [];
-        let logs = JSON.parse(localStorage.getItem('habitLogs')) || [];
-        let schedule = JSON.parse(localStorage.getItem('schedule')) || [];
-        let events = JSON.parse(localStorage.getItem('events')) || [];
+        let habits = [];
+        let logs = [];
+        let schedule = [];
+        let events = [];
         let weatherData = JSON.parse(localStorage.getItem('weatherData')) || null;
-        let userProfile = JSON.parse(localStorage.getItem('userProfile')) || { name: 'Stranger' };
+        let userProfile = { name: 'Stranger' };
         let currentTheme = localStorage.getItem('theme') || 'light';
 
         // Apply theme immediately to prevent flashing
@@ -13,7 +13,7 @@
 
         // DOM Elements
         const activityInput = document.getElementById('activityInput');
-        const hourInput = document.getElementById('hourInput');
+        const timeInput = document.getElementById('timeInput');
         const recommendationArea = document.getElementById('recommendationArea');
         const recommendationText = document.getElementById('recommendationText');
         const userHabitList = document.getElementById('userHabitList');
@@ -25,8 +25,21 @@
         const settingsThemeToggle = document.getElementById('settingsThemeToggle');
 
         // Initialize
-        function init() {
+        async function init() {
             applyTheme();
+            
+            try {
+                const res = await fetch('api/get_all.php');
+                const data = await res.json();
+                habits = data.habits || [];
+                schedule = data.schedule || [];
+                events = data.events || [];
+                logs = data.logs || [];
+                if (data.profile) userProfile = data.profile;
+            } catch (e) {
+                console.error("Failed to load data from DB", e);
+            }
+
             updateGreeting();
             updateWeather();
             renderUI();
@@ -65,7 +78,7 @@
 
         function updateProfile() {
             userProfile.name = userNameInput.value || 'Stranger';
-            localStorage.setItem('userProfile', JSON.stringify(userProfile));
+            fetch('api/sync.php?type=profile', { method: 'POST', body: JSON.stringify(userProfile) });
             updateGreeting();
             addLog('System', `Updated profile name to ${userProfile.name}`);
         }
@@ -73,31 +86,41 @@
         function clearLogs() {
             if (confirm('Clear all activity logs?')) {
                 logs = [];
-                localStorage.removeItem('habitLogs');
+                fetch('api/sync.php?type=logs', { method: 'POST', body: JSON.stringify(logs) });
                 renderLogs();
             }
         }
 
-        function saveHabits() { localStorage.setItem('habits', JSON.stringify(habits)); }
-        function saveSchedule() { localStorage.setItem('schedule', JSON.stringify(schedule)); }
-        function saveEvents() { localStorage.setItem('events', JSON.stringify(events)); }
+        function saveHabits() { fetch('api/sync.php?type=habits', { method: 'POST', body: JSON.stringify(habits) }); }
+        function saveSchedule() { fetch('api/sync.php?type=schedule', { method: 'POST', body: JSON.stringify(schedule) }); }
+        function saveEvents() { fetch('api/sync.php?type=events', { method: 'POST', body: JSON.stringify(events) }); }
 
         function addLog(type, message) {
             logs.unshift({ type, message, time: new Date().toISOString() });
             if (logs.length > 50) logs.pop();
-            localStorage.setItem('habitLogs', JSON.stringify(logs));
+            fetch('api/sync.php?type=logs', { method: 'POST', body: JSON.stringify(logs) });
             renderLogs();
         }
 
         // Habit Functions
+        function formatAMPM(time) {
+            if (!time && time !== 0) return '--.--';
+            let h, m;
+            if (typeof time === 'number') { h = time; m = 0; }
+            else { [h, m] = time.split(':').map(Number); }
+            const ampm = h >= 12 ? 'pm' : 'am';
+            h = h % 12; h = h ? h : 12;
+            return `${h.toString().padStart(2, '0')}.${m.toString().padStart(2, '0')} ${ampm}`;
+        }
+
         function addHabit() {
             const activity = activityInput.value.trim();
-            const hour = parseInt(hourInput.value);
-            if (!activity || isNaN(hour)) return;
-            habits.push({ activity, hour, lastNotified: -1, completedToday: false });
+            const time = timeInput.value;
+            if (!activity || !time) return;
+            habits.push({ activity, time, lastNotified: '', completedToday: false });
             saveHabits();
             addLog('Habit', `Added habit: ${activity}`);
-            activityInput.value = ''; hourInput.value = '';
+            activityInput.value = ''; timeInput.value = '';
             renderUI();
         }
 
@@ -355,7 +378,7 @@
                 card.innerHTML = `
                     <div class="flex items-center gap-4">
                         <div class="w-16 h-12 rounded-xl bg-primary/10 flex flex-col items-center justify-center text-primary">
-                            <span class="text-sm font-black">${habit.hour.toString().padStart(2, '0')}:00</span>
+                            <span class="text-sm font-black">${formatAMPM(habit.time !== undefined ? habit.time : habit.hour)}</span>
                             <span class="text-[8px] font-bold uppercase">Time</span>
                         </div>
                         <div>
@@ -391,7 +414,7 @@
                         <div class="text-xs font-bold text-slate-400 w-8">${index + 1}</div>
                         <div>
                             <p class="font-bold text-on-surface dark:text-white">${habit.activity}</p>
-                            <p class="text-[10px] text-slate-400 uppercase font-black">${habit.hour}:00</p>
+                            <p class="text-[10px] text-slate-400 uppercase font-black">${formatAMPM(habit.time !== undefined ? habit.time : habit.hour)}</p>
                         </div>
                     </div>
                     <button onclick="deleteHabit(${index})" class="p-2 text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors">
@@ -424,7 +447,10 @@
             const chart = document.getElementById('hourlyChart');
             chart.innerHTML = '';
             const hours = new Array(24).fill(0);
-            habits.forEach(h => hours[h.hour]++);
+            habits.forEach(h => {
+                const hr = typeof h.time === 'string' ? parseInt(h.time.split(':')[0]) : h.hour;
+                if (!isNaN(hr)) hours[hr]++;
+            });
             const max = Math.max(...hours, 1);
             hours.forEach((count, i) => {
                 const height = (count / max) * 100;
@@ -447,11 +473,16 @@
         }
 
         function checkReminder() {
-            const currentHour = new Date().getHours();
+            const now = new Date();
+            const hr = now.getHours().toString().padStart(2, '0');
+            const mn = now.getMinutes().toString().padStart(2, '0');
+            const currentStr = `${hr}:${mn}`;
+            
             habits.forEach((habit, index) => {
-                if (habit.hour === currentHour && habit.lastNotified !== currentHour) {
+                const hTime = typeof habit.time === 'string' ? habit.time : `${habit.hour.toString().padStart(2, '0')}:00`;
+                if (hTime === currentStr && habit.lastNotified !== currentStr) {
                     showNotification(habit.activity);
-                    habits[index].lastNotified = currentHour;
+                    habits[index].lastNotified = currentStr;
                     saveHabits();
                 }
             });
@@ -500,7 +531,7 @@
             const suggestions = ["Meditation at 06:00", "Deep Work at 09:00", "Hydration at 14:00", "Review at 17:00", "Detox at 21:00"];
             const random = suggestions[Math.floor(Math.random() * suggestions.length)];
             const [act, time] = random.split(' at ');
-            activityInput.value = act; hourInput.value = time.split(':')[0];
+            activityInput.value = act; timeInput.value = time;
             switchView('dashboard');
             addLog('AI', `Generated: ${random}`);
         }
@@ -514,5 +545,68 @@
         }
 
         function showAddModal() { switchView('dashboard'); activityInput.focus(); }
+
+        async function askAI() {
+            const input = document.getElementById('aiInput');
+            const btn = document.getElementById('aiSendBtn');
+            const chatBox = document.getElementById('aiChatBox');
+            const prompt = input.value.trim();
+            if (!prompt) return;
+
+            // Add User Message
+            const userMsg = document.createElement('div');
+            userMsg.className = "flex gap-4 flex-row-reverse";
+            userMsg.innerHTML = `
+                <div class="w-10 h-10 rounded-xl bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 flex items-center justify-center shrink-0">
+                    <span class="material-symbols-outlined text-lg">person</span>
+                </div>
+                <div class="bg-primary text-white p-4 rounded-2xl rounded-tr-none shadow-sm max-w-[85%]">
+                    <p class="text-sm leading-relaxed">${prompt}</p>
+                </div>
+            `;
+            chatBox.appendChild(userMsg);
+            input.value = '';
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            // Loading state
+            btn.disabled = true;
+            btn.innerHTML = `<span class="material-symbols-outlined text-xl animate-spin">refresh</span>`;
+
+            try {
+                const res = await fetch('api/gemini.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prompt })
+                });
+                const data = await res.json();
+                
+                let replyText = data.reply || data.error || "Maaf, terjadi kesalahan.";
+
+                // Format simple markdown (e.g., **bold**, *italic*)
+                replyText = replyText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                                     .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                                     .replace(/\n/g, '<br>');
+
+                const aiMsg = document.createElement('div');
+                aiMsg.className = "flex gap-4";
+                aiMsg.innerHTML = `
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-primary-container text-white flex items-center justify-center shrink-0 shadow-lg shadow-primary/20">
+                        <span class="material-symbols-outlined text-lg">auto_awesome</span>
+                    </div>
+                    <div class="bg-slate-50 dark:bg-slate-800/80 p-4 rounded-2xl rounded-tl-none border border-slate-100 dark:border-slate-700 shadow-sm max-w-[85%]">
+                        <p class="text-on-surface dark:text-slate-200 text-sm leading-relaxed">${replyText}</p>
+                    </div>
+                `;
+                chatBox.appendChild(aiMsg);
+
+                addLog('AI Chat', `Tanya seputar: ${prompt.substring(0, 20)}...`);
+            } catch (err) {
+                console.error(err);
+            }
+
+            btn.disabled = false;
+            btn.innerHTML = `<span class="material-symbols-outlined text-xl">send</span>`;
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
 
         init();

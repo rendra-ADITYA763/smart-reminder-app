@@ -28,6 +28,11 @@
                     <span class="material-symbols-outlined">partly_cloudy_day</span>
                     Weather Concierge
                 </a>
+                <a class="sidebar-link text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-900 flex items-center gap-3 p-3 transition-all duration-300 cursor-pointer active:opacity-80 rounded-lg"
+                    onclick="switchView('ai')">
+                    <span class="material-symbols-outlined">robot_2</span>
+                    AI Assistant
+                </a>
                 <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 mt-4">Admin</p>
                 <a class="sidebar-link text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-900 flex items-center gap-3 p-3 transition-all duration-300 cursor-pointer active:opacity-80 rounded-lg"
                     onclick="switchView('analytics')">
