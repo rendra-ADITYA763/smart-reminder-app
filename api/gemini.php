@@ -1,7 +1,7 @@
 <?php
 header('Content-Type: application/json');
 
-$GEMINI_API_KEY = "AIzaSyBfTf4KpORxvZ2cFXJ4teNrrn2qZHD1tO8";
+$GEMINI_API_KEY = "MASUKKAN_API_KEY_GEMINI_ANDA_DISINI";
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     echo json_encode(["error" => "Only POST method is allowed"]);

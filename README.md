@@ -35,41 +35,80 @@ Digunakan untuk mengambil data cuaca secara real-time tanpa memerlukan API Key (
 
 ## 🛠️ Teknologi yang Digunakan
 
+- **PHP**: Backend untuk autentikasi dan API.
+- **MySQL**: Database untuk penyimpanan data.
 - **HTML5 & Vanilla JavaScript**: Logika aplikasi murni tanpa framework berat.
 - **Tailwind CSS**: Untuk desain antarmuka yang modern, responsif, dan premium.
 - **Google Material Symbols**: Untuk ikonografi yang bersih dan intuitif.
 - **Open-Meteo API**: Untuk pengambilan data cuaca secara real-time.
+- **Google Gemini API**: Untuk fitur AI Assistant.
+
+---
+
+## 🔐 Akun Default (Login)
+
+Aplikasi memiliki sistem **Login & Register** dengan dua role:
+
+| Role | Email | Password | Akses |
+|------|-------|----------|-------|
+| 🛡️ **Admin** | `admin@smart-reminder.com` | `admin123` | Semua fitur (Dashboard, Analytics, Logs, Admin Panel, dll) |
+| 👤 **User** | *(Buat via Register)* | *(Buat sendiri)* | Fitur standar (Dashboard, Schedule, Events, Weather, AI) |
+
+> **Catatan**: Akun Admin otomatis dibuat saat pertama kali menjalankan aplikasi. Untuk akun User, silakan daftar melalui halaman Register.
+
+### Perbedaan Akses per Role
+
+| Fitur | Admin | User |
+|-------|:-----:|:----:|
+| Dashboard | ✅ | ✅ |
+| College Schedule | ✅ | ✅ |
+| Competitions | ✅ | ✅ |
+| Weather Concierge | ✅ | ✅ |
+| AI Assistant | ✅ | ✅ |
+| Settings | ✅ | ✅ |
+| **Analytics** | ✅ | ❌ |
+| **Logs** | ✅ | ❌ |
+| **Admin Panel** | ✅ | ❌ |
 
 ---
 
 ## 🚀 Cara Menjalankan di Laptop
 
-Karena aplikasi ini dibangun menggunakan teknologi web standar tanpa *backend* yang rumit, Anda bisa menjalankannya dengan sangat mudah:
+### Prasyarat
+- **XAMPP** (Apache + MySQL) terinstal di komputer Anda.
+
+### Langkah-langkah
 
 1.  **Clone atau Download Repository ini**:
     ```bash
     git clone https://github.com/username/smart-reminder-app.git
     ```
-    *Atau cukup download file ZIP dan ekstrak.*
+    *Atau cukup download file ZIP dan ekstrak ke folder `C:\xampp\htdocs\smart-reminder-app`*
 
-2.  **Buka Folder Proyek**:
-    Cari file bernama `activityApp.html`.
+2.  **Jalankan XAMPP**:
+    - Buka XAMPP Control Panel
+    - Start **Apache** dan **MySQL**
 
-3.  **Jalankan di Browser**:
-    - **Cara A**: Klik kanan pada `activityApp.html` dan pilih **Open With** > **Google Chrome** (atau browser favorit Anda).
-    - **Cara B**: *Drag and drop* file `activityApp.html` langsung ke tab browser yang sedang terbuka.
+3.  **Buka di Browser**:
+    ```
+    http://localhost/smart-reminder-app/
+    ```
 
-4.  **Selesai!** Aplikasi siap digunakan. Tidak perlu instalasi database atau server tambahan.
+4.  **Login**:
+    - Halaman login akan muncul otomatis
+    - Gunakan akun admin default: `admin@smart-reminder.com` / `admin123`
+    - Atau klik tab **Register** untuk membuat akun baru
+
+5.  **Selesai!** Database dan tabel akan otomatis dibuat saat pertama kali diakses.
 
 ---
 
 ## 📖 Cara Penggunaan
 
-1.  **Tambah Kebiasaan**: Masukkan nama aktivitas dan jam (0-23) di User Panel, lalu klik "Tambah Kebiasaan".
-2.  **Cek Cuaca**: Gunakan menu "Weather Concierge" untuk melihat ramalan cuaca 7 hari ke depan.
-3.  **Atur Jadwal Kuliah**: Masuk ke menu "College Schedule" untuk memasukkan jadwal mata kuliah mingguan Anda.
-4.  **Hapus Data**: Jika ada salah ketik, arahkan kursor ke kartu aktivitas atau jadwal, lalu klik ikon tempat sampah/tanda silang yang muncul.
-5.  **Mode Gelap**: Klik ikon bulan di pojok kanan atas untuk kenyamanan mata di malam hari.
-.
-
-
+1.  **Login / Register**: Masuk dengan akun admin default atau buat akun baru di halaman Register.
+2.  **Tambah Kebiasaan**: Masukkan nama aktivitas dan jam di Dashboard, lalu klik "Add Habit".
+3.  **Cek Cuaca**: Gunakan menu "Weather Concierge" untuk melihat ramalan cuaca 7 hari ke depan.
+4.  **Atur Jadwal Kuliah**: Masuk ke menu "College Schedule" untuk memasukkan jadwal mata kuliah.
+5.  **AI Assistant**: Tanyakan tips kesehatan & kebugaran ke AI Assistant.
+6.  **Mode Gelap**: Klik ikon bulan di pojok kanan atas.
+7.  **Logout**: Klik tombol Logout di sidebar atau dropdown profil di pojok kanan atas.

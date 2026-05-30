@@ -14,6 +14,37 @@
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
         rel="stylesheet" />
     <link rel="stylesheet" href="app.css" />
+    <style>
+        /* Premium Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1; /* slate-300 */
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8; /* slate-400 */
+        }
+        
+        /* Dark mode scrollbar */
+        html.dark ::-webkit-scrollbar-track,
+        .dark ::-webkit-scrollbar-track {
+            background: #0f172a; /* slate-900 */
+        }
+        html.dark ::-webkit-scrollbar-thumb,
+        .dark ::-webkit-scrollbar-thumb {
+            background: #334155; /* slate-700 */
+        }
+        html.dark ::-webkit-scrollbar-thumb:hover,
+        .dark ::-webkit-scrollbar-thumb:hover {
+            background: #475569; /* slate-600 */
+        }
+    </style>
 </head>
 
 <body
@@ -60,7 +91,43 @@
                     </div>
                 </div>
             </div>
-            <span
-                class="material-symbols-outlined text-on-surface-variant cursor-pointer p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors">account_circle</span>
+            <!-- User Profile Dropdown -->
+            <div class="relative group">
+                <div class="flex items-center gap-2 cursor-pointer p-1.5 pl-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                    <?php if (isset($sessionUser)): ?>
+                    <div class="text-right hidden sm:block">
+                        <p class="text-xs font-bold text-slate-700 dark:text-slate-200 leading-tight"><?php echo htmlspecialchars($sessionUser['name']); ?></p>
+                        <span class="text-[10px] font-bold uppercase tracking-wider <?php echo $sessionUser['role'] === 'admin' ? 'text-amber-500' : 'text-blue-500'; ?>">
+                            <?php echo $sessionUser['role']; ?>
+                        </span>
+                    </div>
+                    <?php endif; ?>
+                    <div class="w-9 h-9 rounded-xl flex items-center justify-center <?php echo isset($sessionUser) && $sessionUser['role'] === 'admin' ? 'bg-gradient-to-br from-amber-400 to-amber-600' : 'bg-gradient-to-br from-blue-400 to-blue-600'; ?> text-white shadow-sm">
+                        <span class="material-symbols-outlined text-lg"><?php echo isset($sessionUser) && $sessionUser['role'] === 'admin' ? 'shield_person' : 'person'; ?></span>
+                    </div>
+                </div>
+                <!-- Dropdown -->
+                <div class="absolute right-0 mt-2 w-64 bg-white dark:bg-slate-900 shadow-xl rounded-2xl border border-slate-200 dark:border-slate-800 p-3 hidden group-hover:block z-50">
+                    <?php if (isset($sessionUser)): ?>
+                    <div class="p-3 mb-2 bg-slate-50 dark:bg-slate-800 rounded-xl">
+                        <p class="font-bold text-sm dark:text-white"><?php echo htmlspecialchars($sessionUser['name']); ?></p>
+                        <p class="text-[10px] text-slate-400 mt-0.5"><?php echo htmlspecialchars($sessionUser['email']); ?></p>
+                        <span class="inline-flex items-center gap-1 mt-2 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider <?php echo $sessionUser['role'] === 'admin' ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400' : 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400'; ?>">
+                            <span class="material-symbols-outlined text-xs"><?php echo $sessionUser['role'] === 'admin' ? 'shield_person' : 'person'; ?></span>
+                            <?php echo $sessionUser['role']; ?>
+                        </span>
+                    </div>
+                    <?php endif; ?>
+                    <a href="#" onclick="switchView('settings')" class="flex items-center gap-3 p-3 rounded-xl text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                        <span class="material-symbols-outlined text-lg">settings</span>
+                        Settings
+                    </a>
+                    <button onclick="handleLogout()" class="w-full flex items-center gap-3 p-3 rounded-xl text-sm text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors mt-1">
+                        <span class="material-symbols-outlined text-lg">logout</span>
+                        Logout
+                    </button>
+                </div>
+            </div>
         </div>
     </nav>
+

@@ -73,7 +73,8 @@
             let greet = "Good Morning";
             if (hour >= 12 && hour < 17) greet = "Good Afternoon";
             else if (hour >= 17) greet = "Good Evening";
-            greetingText.innerHTML = `${greet}, <span class="text-primary">${userProfile.name}.</span>`;
+            const displayName = (typeof SESSION_USER !== 'undefined' && SESSION_USER.name) ? SESSION_USER.name : userProfile.name;
+            greetingText.innerHTML = `${greet}, <span class="text-primary">${displayName}.</span>`;
         }
 
         function updateProfile() {
@@ -544,6 +545,16 @@
             }
         }
 
+        async function handleLogout() {
+            if (!confirm('Apakah Anda yakin ingin logout?')) return;
+            try {
+                await fetch('api/auth.php?action=logout');
+            } catch (e) {
+                console.error('Logout error:', e);
+            }
+            window.location.href = 'login.php';
+        }
+
         function showAddModal() { switchView('dashboard'); activityInput.focus(); }
 
         async function askAI() {
@@ -555,12 +566,12 @@
 
             // Add User Message
             const userMsg = document.createElement('div');
-            userMsg.className = "flex gap-4 flex-row-reverse";
+            userMsg.className = "flex gap-4 flex-row-reverse chat-animate";
             userMsg.innerHTML = `
-                <div class="w-10 h-10 rounded-xl bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 flex items-center justify-center shrink-0">
+                <div class="w-10 h-10 rounded-xl bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 flex items-center justify-center shrink-0 shadow-sm">
                     <span class="material-symbols-outlined text-lg">person</span>
                 </div>
-                <div class="bg-primary text-white p-4 rounded-2xl rounded-tr-none shadow-sm max-w-[85%]">
+                <div class="bg-gradient-to-br from-slate-800 to-slate-900 dark:from-slate-700 dark:to-slate-800 text-white p-4 rounded-2xl rounded-tr-none shadow-md max-w-[85%] hover:-translate-y-1 transition-transform">
                     <p class="text-sm leading-relaxed">${prompt}</p>
                 </div>
             `;
@@ -588,13 +599,13 @@
                                      .replace(/\n/g, '<br>');
 
                 const aiMsg = document.createElement('div');
-                aiMsg.className = "flex gap-4";
+                aiMsg.className = "flex gap-4 chat-animate";
                 aiMsg.innerHTML = `
-                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-primary-container text-white flex items-center justify-center shrink-0 shadow-lg shadow-primary/20">
-                        <span class="material-symbols-outlined text-lg">auto_awesome</span>
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-blue-500 text-white flex items-center justify-center shrink-0 shadow-lg shadow-purple-500/20">
+                        <span class="material-symbols-outlined text-lg animate-spin" style="animation-duration: 4s;">auto_awesome</span>
                     </div>
-                    <div class="bg-slate-50 dark:bg-slate-800/80 p-4 rounded-2xl rounded-tl-none border border-slate-100 dark:border-slate-700 shadow-sm max-w-[85%]">
-                        <p class="text-on-surface dark:text-slate-200 text-sm leading-relaxed">${replyText}</p>
+                    <div class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm p-4 rounded-2xl rounded-tl-none border border-slate-200 dark:border-slate-700/50 shadow-sm max-w-[85%] hover:-translate-y-1 transition-transform">
+                        <p class="text-slate-800 dark:text-slate-200 text-sm leading-relaxed font-medium">${replyText}</p>
                     </div>
                 `;
                 chatBox.appendChild(aiMsg);

@@ -49,8 +49,24 @@ $conn->query("CREATE TABLE IF NOT EXISTS user_profile (
     name VARCHAR(255) NOT NULL DEFAULT 'Stranger'
 )");
 
+// Users table for authentication
+$conn->query("CREATE TABLE IF NOT EXISTS users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    role ENUM('admin', 'user') NOT NULL DEFAULT 'user',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)");
+
 // Insert default profile
 $conn->query("INSERT INTO user_profile (id, name) SELECT 1, 'Stranger' WHERE NOT EXISTS (SELECT 1 FROM user_profile WHERE id = 1)");
+
+// Seed default admin account (password: admin123)
+$defaultAdminHash = password_hash('admin123', PASSWORD_DEFAULT);
+$conn->query("INSERT INTO users (name, email, password, role) 
+    SELECT 'Administrator', 'admin@smart-reminder.com', '$defaultAdminHash', 'admin' 
+    WHERE NOT EXISTS (SELECT 1 FROM users WHERE email = 'admin@smart-reminder.com')");
 
 return $conn;
 ?>
