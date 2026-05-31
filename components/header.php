@@ -60,16 +60,7 @@
                 Smart Reminder
             </div>
         </div>
-        <div class="hidden md:flex gap-8">
-            <a class="nav-link active text-blue-700 dark:text-blue-400 font-semibold border-b-2 border-blue-700 transition-colors active:scale-95 duration-200"
-                href="#" onclick="switchView('dashboard')">Dashboard</a>
-            <a class="nav-link text-slate-500 dark:text-slate-400 hover:text-slate-900 transition-colors active:scale-95 duration-200"
-                href="#" onclick="switchView('logs')">History</a>
-            <a class="nav-link text-slate-500 dark:text-slate-400 hover:text-slate-900 transition-colors active:scale-95 duration-200"
-                href="#" onclick="switchView('analytics')">Statistics</a>
-            <a class="nav-link text-slate-500 dark:text-slate-400 hover:text-slate-900 transition-colors active:scale-95 duration-200"
-                href="#" onclick="switchView('settings')">Settings</a>
-        </div>
+
         <div class="flex items-center gap-4">
             <button id="darkModeToggle" onclick="toggleDarkMode()"
                 class="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all">

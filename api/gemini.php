@@ -1,7 +1,7 @@
 <?php
 header('Content-Type: application/json');
 
-$GEMINI_API_KEY = "MASUKKAN_API_KEY_GEMINI_ANDA_DISINI";
+$GEMINI_API_KEY = "";
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     echo json_encode(["error" => "Only POST method is allowed"]);
@@ -16,7 +16,7 @@ if (empty($prompt)) {
     exit;
 }
 
-if ($GEMINI_API_KEY === "MASUKKAN_API_KEY_GEMINI_ANDA_DISINI") {
+if ($GEMINI_API_KEY === "") {
     echo json_encode(["error" => "API Key belum di-setting. Silakan buka file api/gemini.php dan masukkan API key Anda."]);
     exit;
 }

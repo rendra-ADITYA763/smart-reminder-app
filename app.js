@@ -180,51 +180,119 @@
             if (!grid) return;
             grid.innerHTML = '';
             const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-            days.forEach(dayName => {
+            
+            days.forEach((dayName, colIndex) => {
                 const dayClasses = schedule.filter(s => s.day === dayName).sort((a, b) => a.time.localeCompare(b.time));
+                
                 const col = document.createElement('div');
-                col.className = "bg-white dark:bg-slate-900 p-6 rounded-[2rem] border border-slate-100 dark:border-slate-800 shadow-sm";
-                col.innerHTML = `<h4 class="text-xs font-black uppercase text-slate-400 mb-4 tracking-widest">${dayName}</h4>`;
-                const list = document.createElement('div');
-                list.className = "space-y-3";
-                dayClasses.forEach((c) => {
-                    const item = document.createElement('div');
-                    item.className = "p-4 bg-slate-50 dark:bg-slate-800 rounded-xl relative group border border-transparent hover:border-primary/20 transition-all";
-                    item.innerHTML = `
-                        <div class="pr-8">
-                            <p class="font-bold text-sm dark:text-white">${c.subject}</p>
-                            <p class="text-[10px] text-primary font-bold uppercase">${c.time}</p>
+                // day-column animation with staggered delay
+                col.className = `day-column min-w-[280px] w-[280px] snap-center relative`;
+                col.style.animationDelay = `${colIndex * 0.1}s`;
+                
+                col.innerHTML = `
+                    <div class="pulse-line"></div>
+                    <div class="glass-panel p-6 rounded-[2rem] h-full flex flex-col relative group/col transition-all duration-500 hover:shadow-[0_0_40px_rgba(59,130,246,0.15)] hover:border-blue-500/30">
+                        <div class="flex items-center justify-between mb-6">
+                            <h4 class="text-sm font-black text-transparent bg-clip-text bg-gradient-to-r from-slate-600 to-slate-400 dark:from-white dark:to-slate-400 uppercase tracking-widest">${dayName}</h4>
+                            <div class="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-500 font-bold text-xs">${dayClasses.length}</div>
                         </div>
-                        <button onclick="deleteClass(${schedule.indexOf(c)})" class="absolute top-3 right-3 text-slate-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all">
-                            <span class="material-symbols-outlined text-sm">close</span>
+                        <div class="space-y-4 flex-1 relative">
+                            <!-- Connection Line -->
+                            <div class="absolute left-4 top-2 bottom-4 w-px bg-gradient-to-b from-blue-500/50 via-purple-500/50 to-transparent -z-10"></div>
+                            
+                            ${dayClasses.length === 0 ? `
+                                <div class="h-full flex flex-col items-center justify-center opacity-50 text-slate-400 py-10">
+                                    <span class="material-symbols-outlined text-4xl mb-2">hotel_class</span>
+                                    <p class="text-xs font-medium">Free Day</p>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+
+                const listContainer = col.querySelector('.space-y-4');
+                
+                dayClasses.forEach((c, itemIndex) => {
+                    const item = document.createElement('div');
+                    item.className = "holo-card animate-class-item ml-8 p-4 bg-white dark:bg-slate-800 rounded-2xl relative group/item border border-slate-100 dark:border-slate-700/50 cursor-pointer";
+                    item.style.animationDelay = `${(colIndex * 0.1) + (itemIndex * 0.15) + 0.2}s`;
+                    
+                    item.innerHTML = `
+                        <!-- Node Point -->
+                        <div class="absolute -left-[38px] top-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-white dark:bg-slate-900 border-4 border-blue-500 group-hover/item:border-purple-500 group-hover/item:scale-125 transition-transform z-10 shadow-[0_0_10px_rgba(59,130,246,0.5)]"></div>
+                        
+                        <div class="pr-8">
+                            <p class="text-[10px] text-blue-500 font-black tracking-widest uppercase mb-1 flex items-center gap-1">
+                                <span class="material-symbols-outlined text-[12px]">schedule</span>
+                                ${c.time}
+                            </p>
+                            <p class="font-extrabold text-sm text-slate-800 dark:text-white leading-tight">${c.subject}</p>
+                        </div>
+                        
+                        <button onclick="deleteClass(${schedule.indexOf(c)})" class="absolute top-1/2 -translate-y-1/2 right-3 w-8 h-8 rounded-full bg-red-500/10 text-red-500 flex items-center justify-center opacity-0 group-hover/item:opacity-100 transition-all hover:bg-red-500 hover:text-white scale-75 group-hover/item:scale-100">
+                            <span class="material-symbols-outlined text-sm">delete</span>
                         </button>
                     `;
-                    list.appendChild(item);
+                    listContainer.appendChild(item);
                 });
-                if (dayClasses.length === 0) col.innerHTML += `<p class="text-[10px] text-slate-300 italic px-1">No classes scheduled</p>`;
-                col.appendChild(list);
+
                 grid.appendChild(col);
             });
         }
 
         function renderEvents() {
-            const tbody = document.getElementById('eventTableBody');
-            if (!tbody) return;
-            tbody.innerHTML = '';
-            events.sort((a, b) => new Date(a.date) - new Date(b.date)).forEach((e) => {
-                const row = document.createElement('tr');
-                row.className = "hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group";
-                row.innerHTML = `
-                    <td class="p-6 font-bold dark:text-white">${e.name}</td>
-                    <td class="p-6 text-sm text-slate-500">${e.date}</td>
-                    <td class="p-6 text-sm text-slate-500">${e.loc}</td>
-                    <td class="p-6">
-                        <button onclick="deleteEvent(${events.indexOf(e)})" class="text-slate-300 hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 p-2 rounded-lg transition-all">
-                            <span class="material-symbols-outlined">delete</span>
-                        </button>
-                    </td>
+            const container = document.getElementById('eventTableBody');
+            if (!container) return;
+            container.innerHTML = '';
+            
+            if (events.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full h-64 flex flex-col items-center justify-center opacity-50 text-slate-400">
+                        <span class="material-symbols-outlined text-6xl mb-4">sports_esports</span>
+                        <p class="text-lg font-medium">No competitions registered</p>
+                    </div>
                 `;
-                tbody.appendChild(row);
+                return;
+            }
+
+            events.sort((a, b) => new Date(a.date) - new Date(b.date)).forEach((e, i) => {
+                const card = document.createElement('div');
+                card.className = "event-card neon-border bg-white dark:bg-slate-900 p-6 rounded-[2rem] flex flex-col justify-between group/card shadow-sm";
+                card.style.animationDelay = `${i * 0.15}s`;
+                
+                // Format date nice
+                const dateObj = new Date(e.date);
+                const day = dateObj.toLocaleDateString('en-US', { day: '2-digit' });
+                const month = dateObj.toLocaleDateString('en-US', { month: 'short' }).toUpperCase();
+                
+                card.innerHTML = `
+                    <div class="flex justify-between items-start mb-6">
+                        <div class="flex items-center gap-4">
+                            <div class="glow-ring w-14 h-14 rounded-full bg-slate-50 dark:bg-slate-800 flex flex-col items-center justify-center border border-slate-200 dark:border-slate-700 z-10 shadow-inner">
+                                <span class="text-lg font-black text-slate-900 dark:text-white leading-none">${day}</span>
+                                <span class="text-[9px] font-bold text-pink-500 uppercase tracking-widest">${month}</span>
+                            </div>
+                            <div>
+                                <h4 class="font-extrabold text-lg text-slate-800 dark:text-white group-hover/card:text-transparent group-hover/card:bg-clip-text group-hover/card:bg-gradient-to-r group-hover/card:from-pink-500 group-hover/card:to-purple-500 transition-colors">${e.name}</h4>
+                                <p class="text-[10px] text-slate-400 uppercase tracking-widest font-bold flex items-center gap-1 mt-1">
+                                    <span class="material-symbols-outlined text-[12px] text-purple-500">location_on</span>
+                                    ${e.loc}
+                                </p>
+                            </div>
+                        </div>
+                        <button onclick="deleteEvent(${events.indexOf(e)})" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 flex items-center justify-center opacity-0 group-hover/card:opacity-100 transition-all hover:bg-red-500 hover:text-white hover:scale-110 hover:-rotate-12 hover:shadow-[0_0_15px_rgba(239,68,68,0.5)]">
+                            <span class="material-symbols-outlined text-sm">close</span>
+                        </button>
+                    </div>
+                    
+                    <div class="flex items-center gap-3">
+                        <div class="flex-1 h-1 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                            <div class="h-full w-full bg-gradient-to-r from-pink-500 to-purple-500 -translate-x-full group-hover/card:translate-x-0 transition-transform duration-700 ease-out"></div>
+                        </div>
+                        <span class="text-[10px] font-bold text-slate-300 dark:text-slate-600 uppercase tracking-widest">Incoming</span>
+                    </div>
+                `;
+                container.appendChild(card);
             });
         }
 
@@ -339,25 +407,51 @@
         function renderWeather() {
             if (!weatherData) return;
             const forecastContainer = document.getElementById('weatherForecast');
+            if (!forecastContainer) return;
             forecastContainer.innerHTML = '';
 
             weatherData.daily.time.forEach((time, i) => {
                 const item = document.createElement('div');
-                item.className = "flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors";
+                
+                const weatherCode = weatherData.daily.weather_code[i];
                 const date = new Date(time).toLocaleDateString([], { weekday: 'long', month: 'short', day: 'numeric' });
-                const icon = getWeatherIcon(weatherData.daily.weather_code[i]);
+                const icon = getWeatherIcon(weatherCode);
+                const desc = getWeatherText(weatherCode);
+                
+                // Determine dynamic glow class based on weather
+                let glowClass = 'glow-cloudy';
+                let iconColor = 'text-slate-500';
+                if (weatherCode === 0 || weatherCode <= 3 && weatherCode > 0) {
+                    glowClass = 'glow-sunny hover:!border-yellow-400/50 hover:shadow-[0_0_30px_rgba(250,204,21,0.2)]';
+                    iconColor = 'text-yellow-500';
+                } else if (weatherCode >= 51 && weatherCode <= 67) {
+                    glowClass = 'glow-rainy hover:!border-blue-400/50 hover:shadow-[0_0_30px_rgba(59,130,246,0.3)]';
+                    iconColor = 'text-blue-500';
+                } else if (weatherCode >= 71) {
+                    glowClass = 'glow-snowy hover:!border-slate-300/50 hover:shadow-[0_0_30px_rgba(226,232,240,0.4)]';
+                    iconColor = 'text-slate-300';
+                }
+
+                item.className = `weather-card-anim glass-weather flex items-center justify-between p-5 rounded-2xl relative overflow-hidden group cursor-pointer ${glowClass}`;
+                item.style.animationDelay = `${i * 0.1}s`;
 
                 item.innerHTML = `
-                    <div class="flex items-center gap-4">
-                        <span class="material-symbols-outlined text-primary text-2xl">${icon}</span>
+                    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out"></div>
+                    <div class="flex items-center gap-5 relative z-10">
+                        <div class="w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-800/80 flex items-center justify-center shadow-inner group-hover:scale-110 transition-transform">
+                            <span class="material-symbols-outlined text-2xl ${iconColor}">${icon}</span>
+                        </div>
                         <div>
-                            <p class="font-bold dark:text-white">${date}</p>
-                            <p class="text-[10px] text-slate-400 uppercase font-black">${getWeatherText(weatherData.daily.weather_code[i])}</p>
+                            <p class="font-extrabold text-slate-800 dark:text-white text-base tracking-tight">${date}</p>
+                            <p class="text-[10px] ${iconColor} uppercase font-black tracking-widest mt-0.5">${desc}</p>
                         </div>
                     </div>
-                    <div class="text-right">
-                        <p class="font-black text-slate-900 dark:text-white">${Math.round(weatherData.daily.temperature_2m_max[i])}°</p>
-                        <p class="text-[10px] text-slate-400">${Math.round(weatherData.daily.temperature_2m_min[i])}°</p>
+                    <div class="text-right relative z-10 flex items-center gap-4">
+                        <div class="h-8 w-px bg-slate-200 dark:bg-slate-700"></div>
+                        <div>
+                            <p class="font-black text-xl text-slate-900 dark:text-white tracking-tighter">${Math.round(weatherData.daily.temperature_2m_max[i])}°</p>
+                            <p class="text-[11px] text-slate-400 font-bold">${Math.round(weatherData.daily.temperature_2m_min[i])}°</p>
+                        </div>
                     </div>
                 `;
                 forecastContainer.appendChild(item);
@@ -369,31 +463,39 @@
             userHabitList.innerHTML = '';
             const filteredHabits = habits.filter(h => h.activity.toLowerCase().includes(searchQuery));
             if (filteredHabits.length === 0) {
-                userHabitList.innerHTML = `<div class="col-span-full p-8 text-center text-slate-400">No habits match your search.</div>`;
+                userHabitList.innerHTML = `<div class="col-span-full p-8 text-center text-slate-400 font-bold uppercase tracking-widest text-xs">No active subroutines match.</div>`;
                 return;
             }
-            filteredHabits.forEach((habit) => {
+            filteredHabits.forEach((habit, i) => {
                 const index = habits.findIndex(h => h === habit);
                 const card = document.createElement('div');
-                card.className = "bg-white dark:bg-slate-900 p-6 rounded-2xl relative group hover:shadow-xl transition-all flex items-center justify-between border border-slate-100 dark:border-slate-800";
+                card.className = "group relative p-4 rounded-2xl transition-all duration-500 overflow-hidden bg-slate-50 dark:bg-slate-800/50 hover:bg-white dark:hover:bg-slate-800 border border-slate-100 dark:border-slate-700/50 hover:border-blue-500/30 hover:shadow-[0_10px_30px_rgba(59,130,246,0.15)] hover:-translate-y-1";
+                
+                // Add a subtle entrance animation delay
+                card.style.animation = `logEntryFade 0.5s ease-out forwards`;
+                card.style.animationDelay = `${i * 0.1}s`;
+                card.style.opacity = '0'; // For the entrance animation
+                
                 card.innerHTML = `
-                    <div class="flex items-center gap-4">
-                        <div class="w-16 h-12 rounded-xl bg-primary/10 flex flex-col items-center justify-center text-primary">
-                            <span class="text-sm font-black">${formatAMPM(habit.time !== undefined ? habit.time : habit.hour)}</span>
-                            <span class="text-[8px] font-bold uppercase">Time</span>
+                    <div class="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                    <div class="relative z-10 flex items-center justify-between gap-3">
+                        <div class="flex items-center gap-3 overflow-hidden">
+                            <div class="w-12 h-12 rounded-xl shrink-0 bg-gradient-to-br ${habit.completedToday ? 'from-emerald-400 to-teal-500 shadow-lg shadow-emerald-500/30' : 'from-blue-500/10 to-purple-500/10 dark:from-slate-700 dark:to-slate-600'} flex flex-col items-center justify-center transition-colors">
+                                <span class="text-[11px] font-black ${habit.completedToday ? 'text-white' : 'text-blue-600 dark:text-blue-400'}">${formatAMPM(habit.time !== undefined ? habit.time : habit.hour)}</span>
+                            </div>
+                            <div class="overflow-hidden min-w-0">
+                                <h4 class="text-sm font-black text-slate-800 dark:text-white truncate ${habit.completedToday ? 'line-through opacity-50' : ''}">${habit.activity}</h4>
+                                <p class="text-[9px] text-slate-400 uppercase tracking-widest font-bold mt-0.5 truncate">Scheduled Task</p>
+                            </div>
                         </div>
-                        <div>
-                            <h4 class="text-on-surface dark:text-white font-bold ${habit.completedToday ? 'line-through opacity-50' : ''}">${habit.activity}</h4>
-                            <p class="text-[10px] text-slate-400 uppercase tracking-widest font-bold">Scheduled</p>
+                        <div class="flex items-center gap-2 shrink-0">
+                            <button onclick="deleteHabit(${index})" class="w-8 h-8 rounded-lg text-slate-300 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0">
+                                <span class="material-symbols-outlined text-[16px]">delete</span>
+                            </button>
+                            <button onclick="toggleComplete(${index})" class="w-9 h-9 rounded-xl border-2 transition-all flex items-center justify-center ${habit.completedToday ? 'bg-emerald-500 border-emerald-500 text-white shadow-lg shadow-emerald-500/30' : 'border-slate-200 dark:border-slate-600 text-transparent hover:border-emerald-500/50 hover:bg-emerald-500/10'}">
+                                <span class="material-symbols-outlined text-[16px] font-bold">${habit.completedToday ? 'done_all' : 'check'}</span>
+                            </button>
                         </div>
-                    </div>
-                    <div class="flex items-center gap-3">
-                        <button onclick="deleteHabit(${index})" class="w-8 h-8 rounded-lg text-slate-300 hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center justify-center transition-all opacity-0 group-hover:opacity-100">
-                            <span class="material-symbols-outlined text-lg">delete</span>
-                        </button>
-                        <button onclick="toggleComplete(${index})" class="w-10 h-10 rounded-xl border-2 transition-all flex items-center justify-center ${habit.completedToday ? 'bg-green-500 border-green-500 text-white shadow-lg shadow-green-500/20' : 'border-slate-200 dark:border-slate-700 text-transparent hover:border-primary/50'}">
-                            <span class="material-symbols-outlined text-lg font-bold">${habit.completedToday ? 'done_all' : 'check'}</span>
-                        </button>
                     </div>
                 `;
                 userHabitList.appendChild(card);
@@ -428,16 +530,43 @@
 
         function renderLogs() {
             const container = document.getElementById('logContent');
-            container.innerHTML = logs.length ? '' : '<p class="p-12 text-center text-slate-400">No activity logs yet.</p>';
-            logs.forEach(log => {
+            if (!container) return;
+            container.innerHTML = '';
+            
+            if (logs.length === 0) {
+                container.innerHTML = `
+                    <div class="p-10 flex flex-col items-center justify-center opacity-40">
+                        <span class="material-symbols-outlined text-5xl mb-3 text-slate-500">history</span>
+                        <p class="text-sm font-mono text-slate-400">Memory banks are empty.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            logs.forEach((log, index) => {
                 const item = document.createElement('div');
-                item.className = "p-4 flex items-start gap-4";
-                const time = new Date(log.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                item.className = "log-line log-anim px-6 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 dark:border-slate-800/50 hover:bg-red-500/5";
+                item.style.animationDelay = `${index * 0.05}s`;
+                
+                // Color code actions
+                let actionColor = 'text-blue-400';
+                if (log.type === 'Delete' || log.type === 'Removed' || log.type === 'Clear') actionColor = 'text-red-400';
+                else if (log.type === 'Habit' || log.type === 'Action' || log.type === 'Add') actionColor = 'text-emerald-400';
+                else if (log.type === 'System' || log.type === 'Update') actionColor = 'text-amber-400';
+
+                const displayTime = new Date(log.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
                 item.innerHTML = `
-                    <div class="w-2 h-2 rounded-full mt-1.5 ${log.type === 'Habit' ? 'bg-primary' : log.type === 'Action' ? 'bg-green-500' : 'bg-slate-400'}"></div>
-                    <div class="flex-1">
-                        <p class="text-sm dark:text-slate-300"><span class="font-bold">${log.type}:</span> ${log.message}</p>
-                        <p class="text-[10px] text-slate-400">${time}</p>
+                    <div class="flex items-start gap-4">
+                        <span class="text-slate-300 dark:text-slate-600 font-bold opacity-50 mt-1">></span>
+                        <div>
+                            <p class="font-bold text-sm ${actionColor}">${log.type}</p>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">${log.message}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="w-1.5 h-1.5 rounded-full bg-slate-300 dark:bg-slate-600"></div>
+                        <p class="text-[10px] text-slate-400 dark:text-slate-500 font-bold tracking-widest">${displayTime}</p>
                     </div>
                 `;
                 container.appendChild(item);
@@ -446,29 +575,72 @@
 
         function renderAnalytics() {
             const chart = document.getElementById('hourlyChart');
+            if (!chart) return;
             chart.innerHTML = '';
+            
             const hours = new Array(24).fill(0);
             habits.forEach(h => {
                 const hr = typeof h.time === 'string' ? parseInt(h.time.split(':')[0]) : h.hour;
                 if (!isNaN(hr)) hours[hr]++;
             });
             const max = Math.max(...hours, 1);
+            
             hours.forEach((count, i) => {
                 const height = (count / max) * 100;
+                const wrapper = document.createElement('div');
+                wrapper.className = "flex-1 flex flex-col justify-end items-center h-full group relative";
+                
+                // Animated column
                 const bar = document.createElement('div');
-                bar.className = `flex-1 rounded-t-sm transition-all duration-500 ${count > 0 ? 'bg-primary' : 'bg-slate-100 dark:bg-slate-800'}`;
+                const isZero = count === 0;
+                
+                bar.className = `w-full rounded-t-md chart-bar-anim transition-all duration-300 relative overflow-hidden ${
+                    isZero 
+                    ? 'bg-slate-200/50 dark:bg-slate-800/50 hover:bg-slate-300 dark:hover:bg-slate-700' 
+                    : 'bg-gradient-to-t from-emerald-500 to-teal-400 shadow-[0_0_15px_rgba(16,185,129,0.3)] hover:shadow-[0_0_25px_rgba(16,185,129,0.6)] hover:from-emerald-400 hover:to-teal-300'
+                }`;
                 bar.style.height = `${Math.max(height, 2)}%`;
-                bar.title = `${i}:00 - ${count} habits`;
-                chart.appendChild(bar);
+                bar.style.animationDelay = `${i * 0.04}s`;
+
+                // Tooltip
+                const tooltip = document.createElement('div');
+                tooltip.className = "absolute -top-10 bg-slate-900 text-white text-[10px] font-bold px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-20";
+                tooltip.textContent = `${i.toString().padStart(2, '0')}:00 - ${count} actions`;
+                
+                wrapper.appendChild(tooltip);
+                wrapper.appendChild(bar);
+                chart.appendChild(wrapper);
             });
+
             const freqList = document.getElementById('frequencyList');
             freqList.innerHTML = '';
             const activityCounts = {};
             habits.forEach(h => activityCounts[h.activity] = (activityCounts[h.activity] || 0) + 1);
-            Object.entries(activityCounts).sort((a, b) => b[1] - a[1]).slice(0, 5).forEach(([name, count]) => {
+            
+            const sortedActivities = Object.entries(activityCounts).sort((a, b) => b[1] - a[1]);
+            const maxFreq = sortedActivities.length ? sortedActivities[0][1] : 1;
+
+            if (sortedActivities.length === 0) {
+                freqList.innerHTML = `<div class="h-full flex flex-col items-center justify-center opacity-50 text-slate-400 py-10"><span class="material-symbols-outlined text-4xl mb-2">hourglass_empty</span><p class="text-sm font-medium">Awaiting behavioral data...</p></div>`;
+            }
+
+            sortedActivities.slice(0, 5).forEach(([name, count], index) => {
+                const fillPercent = (count / maxFreq) * 100;
                 const item = document.createElement('div');
-                item.className = "flex justify-between items-center p-3 bg-slate-50 dark:bg-slate-800 rounded-xl";
-                item.innerHTML = `<span class="text-sm font-medium dark:text-slate-300">${name}</span><span class="bg-primary/10 text-primary text-[10px] font-bold px-2 py-1 rounded-full">${count}x</span>`;
+                item.className = "relative group cursor-default";
+                
+                item.innerHTML = `
+                    <div class="flex justify-between items-end mb-2">
+                        <span class="text-sm font-bold text-slate-800 dark:text-white group-hover:text-teal-500 transition-colors">${name}</span>
+                        <span class="text-[10px] font-black text-emerald-500 uppercase tracking-widest">${count} occurrences</span>
+                    </div>
+                    <div class="h-3 w-full bg-slate-100 dark:bg-slate-800/80 rounded-full overflow-hidden shadow-inner">
+                        <div class="h-full bg-gradient-to-r from-emerald-500 to-teal-400 freq-bar-fill rounded-full relative shadow-[0_0_10px_rgba(16,185,129,0.5)] group-hover:brightness-110" style="--fill-width: ${fillPercent}%; animation-delay: ${index * 0.1}s;">
+                            <!-- Highlight streak -->
+                            <div class="absolute inset-0 bg-gradient-to-b from-white/30 to-transparent"></div>
+                        </div>
+                    </div>
+                `;
                 freqList.appendChild(item);
             });
         }
