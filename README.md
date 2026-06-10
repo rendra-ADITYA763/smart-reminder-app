@@ -1,8 +1,11 @@
 # 🚀 Smart Reminder: Integrated Predictive Productivity Dashboard with Real-Time Weather Intelligence, Academic Scheduling, and Event Management Concierge
 
-**Smart Reminder** adalah aplikasi manajemen produktivitas berbasis web (*Single Page Application*) yang dirancang untuk membantu Anda mengelola kebiasaan, jadwal kuliah, dan event perlombaan dalam satu dashboard yang elegan dan cerdas.
+## 📖 Deskripsi dan Tujuan Aplikasi
 
-Aplikasi ini dilengkapi dengan fitur **Weather Concierge** yang mampu memberikan rekomendasi aktivitas berdasarkan kondisi cuaca real-time dari API.
+**Smart Reminder** adalah aplikasi manajemen produktivitas berbasis web (*Single Page Application*) yang dirancang secara elegan dan cerdas. 
+
+**Tujuan Aplikasi:**
+Membantu pengguna dalam mengelola kebiasaan (*habit*), jadwal kuliah, serta memantau event perlombaan dalam satu *dashboard* terpusat. Tujuan utamanya adalah untuk meningkatkan produktivitas pengguna dengan memberikan rekomendasi aktivitas yang adaptif terhadap kondisi lingkungan (seperti cuaca).
 
 ---
 
@@ -18,18 +21,14 @@ Aplikasi ini dilengkapi dengan fitur **Weather Concierge** yang mampu memberikan
 
 ---
 
-## 🌐 API Reference
+## ☁️ Referensi API (Data Cuaca)
 
-Aplikasi ini mengintegrasikan layanan pihak ketiga untuk fungsionalitas cerdasnya:
+Aplikasi ini mengintegrasikan layanan pihak ketiga untuk fitur cerdasnya:
 
 ### **Open-Meteo API**
-Digunakan untuk mengambil data cuaca secara real-time tanpa memerlukan API Key (Free for non-commercial use).
-
-- **Base URL**: `https://api.open-meteo.com/v1/forecast`
-- **Data yang diambil**:
-    - `current`: Temperature, Relative Humidity, Weather Code, Wind Speed.
-    - `daily`: Max/Min Temperature, Weather Code.
-- **Fitur Cerdas**: Data ini digunakan sebagai basis logika peringatan jika pengguna memasukkan aktivitas luar ruangan saat kondisi cuaca tidak memungkinkan.
+- **Sumber Data**: Data cuaca diambil dari layanan *open-source* Open-Meteo (`https://open-meteo.com/`). Layanan ini dipilih karena menyediakan data cuaca real-time yang akurat secara gratis (untuk non-komersial) tanpa memerlukan API Key.
+- **Deskripsi Teknis**: Aplikasi melakukan *request* ke *endpoint* `https://api.open-meteo.com/v1/forecast` untuk mengambil metrik cuaca saat ini (suhu, kelembaban, kecepatan angin) serta ramalan cuaca harian.
+- **Tujuan Penggunaan**: API cuaca ini adalah inti dari fitur **Weather Concierge**. Tujuannya adalah untuk menjadi asisten proaktif; sistem akan menganalisis cuaca terkini dan memberikan peringatan pintar jika pengguna merencanakan aktivitas luar ruangan (*outdoor*) saat cuaca memburuk (misalnya hujan).
 
 ---
 
@@ -45,16 +44,16 @@ Digunakan untuk mengambil data cuaca secara real-time tanpa memerlukan API Key (
 
 ---
 
-## 🔐 Akun Default (Login)
+## 🔐 Akun Demo / Default (Login)
 
-Aplikasi memiliki sistem **Login & Register** dengan dua role:
+Aplikasi memiliki sistem **Login & Register**. Anda dapat mencoba aplikasi ini menggunakan akun demo berikut:
 
-| Role | Email | Password | Akses |
+| Role | Email (ID) | Password | Akses |
 |------|-------|----------|-------|
-| 🛡️ **Admin** | `admin@smart-reminder.com` | `admin123` | Semua fitur (Dashboard, Analytics, Logs, Admin Panel, dll) |
-| 👤 **User** | *(Buat via Register)* | *(Buat sendiri)* | Fitur standar (Dashboard, Schedule, Events, Weather, AI) |
+| 🛡️ **Admin Demo** | `admin@smart-reminder.com` | `admin123` | Semua fitur (Dashboard, Analytics, Logs, Admin Panel, dll) |
+| 👤 **User Biasa** | *(Daftar via Register)* | *(Bebas)* | Fitur standar (Dashboard, Schedule, Events, Weather, AI) |
 
-> **Catatan**: Akun Admin otomatis dibuat saat pertama kali menjalankan aplikasi. Untuk akun User, silakan daftar melalui halaman Register.
+> **Catatan**: Akun Admin Demo otomatis dibuat ke dalam database saat pertama kali Anda menjalankan dan membuka aplikasi di browser.
 
 ### Perbedaan Akses per Role
 

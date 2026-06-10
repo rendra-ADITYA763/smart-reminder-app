@@ -86,7 +86,7 @@
                                     </div>
                                 </div>
                                 <div>
-                                    <p class="font-black text-2xl text-slate-800 dark:text-white tracking-tight" id="weatherCity">Jakarta, ID</p>
+                                    <p class="font-black text-2xl text-slate-800 dark:text-white tracking-tight" id="weatherCity">Bandung, ID</p>
                                     <p class="text-xs font-bold text-blue-500 uppercase tracking-widest mt-1">Satellite Linked</p>
                                 </div>
                             </div>
