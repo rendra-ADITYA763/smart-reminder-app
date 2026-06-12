@@ -17,6 +17,7 @@ $conn->select_db($dbname);
 // Create tables if they don't exist
 $conn->query("CREATE TABLE IF NOT EXISTS habits (
     id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL DEFAULT 1,
     activity VARCHAR(255) NOT NULL,
     hour INT NOT NULL,
     completedToday TINYINT(1) DEFAULT 0,
@@ -25,6 +26,7 @@ $conn->query("CREATE TABLE IF NOT EXISTS habits (
 
 $conn->query("CREATE TABLE IF NOT EXISTS schedule (
     id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL DEFAULT 1,
     subject VARCHAR(255) NOT NULL,
     day VARCHAR(50) NOT NULL,
     time VARCHAR(50) NOT NULL
@@ -32,6 +34,7 @@ $conn->query("CREATE TABLE IF NOT EXISTS schedule (
 
 $conn->query("CREATE TABLE IF NOT EXISTS events (
     id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL DEFAULT 1,
     name VARCHAR(255) NOT NULL,
     date DATE NOT NULL,
     loc VARCHAR(255) NOT NULL
@@ -39,10 +42,20 @@ $conn->query("CREATE TABLE IF NOT EXISTS events (
 
 $conn->query("CREATE TABLE IF NOT EXISTS logs (
     id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL DEFAULT 1,
     type VARCHAR(50) NOT NULL,
     message TEXT NOT NULL,
     time VARCHAR(100) NOT NULL
 )");
+
+// Migrate existing tables to include user_id if it doesn't exist
+$tables = ['habits', 'schedule', 'events', 'logs'];
+foreach ($tables as $table) {
+    $result = $conn->query("SHOW COLUMNS FROM `$table` LIKE 'user_id'");
+    if ($result->num_rows == 0) {
+        $conn->query("ALTER TABLE `$table` ADD user_id INT NOT NULL DEFAULT 1");
+    }
+}
 
 $conn->query("CREATE TABLE IF NOT EXISTS user_profile (
     id INT AUTO_INCREMENT PRIMARY KEY,
