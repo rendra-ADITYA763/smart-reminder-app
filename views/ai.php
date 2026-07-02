@@ -35,20 +35,20 @@
     <div class="absolute top-1/4 left-1/4 w-[400px] h-[400px] bg-purple-500/10 rounded-full blur-[100px] pointer-events-none -z-10 ai-orb" style="animation-delay: 0s;"></div>
     <div class="absolute bottom-1/4 right-1/4 w-[300px] h-[300px] bg-blue-500/10 rounded-full blur-[80px] pointer-events-none -z-10 ai-orb" style="animation-delay: 2s; animation-duration: 8s;"></div>
 
-    <div class="w-full max-w-3xl flex flex-col h-[75vh] min-h-[600px]">
-        <header class="mb-8 text-center flex flex-col items-center">
-            <div class="w-20 h-20 rounded-3xl bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center text-white mb-6 shadow-2xl shadow-purple-500/30 ai-orb relative">
-                <div class="absolute inset-0 rounded-3xl bg-white/20 blur-md"></div>
-                <span class="material-symbols-outlined text-4xl relative z-10 animate-pulse">robot_2</span>
-            </div>
-            <h1 class="text-4xl lg:text-5xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-blue-500 dark:from-purple-400 dark:to-blue-400 mb-4">
-                Gemini AI
-            </h1>
-            <p class="text-sm md:text-base text-slate-500 dark:text-slate-400 max-w-lg leading-relaxed">
-                Asisten personal Anda untuk wawasan kesehatan, produktivitas, dan perencanaan rutinitas.
-            </p>
-        </header>
+    <header class="mb-6 text-center flex flex-col items-center">
+        <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center text-white mb-4 shadow-xl shadow-purple-500/30 ai-orb relative">
+            <div class="absolute inset-0 rounded-2xl bg-white/20 blur-md"></div>
+            <span class="material-symbols-outlined text-3xl relative z-10 animate-pulse">robot_2</span>
+        </div>
+        <h1 class="text-3xl lg:text-4xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-blue-500 dark:from-purple-400 dark:to-blue-400 mb-2">
+            Gemini AI
+        </h1>
+        <p class="text-sm text-slate-500 dark:text-slate-400 max-w-lg leading-relaxed">
+            Asisten personal Anda untuk wawasan kesehatan, produktivitas, dan perencanaan rutinitas.
+        </p>
+    </header>
 
+    <div class="w-full max-w-5xl flex flex-col h-[65vh] min-h-[550px]">
         <div class="glass-chat-container rounded-[2rem] shadow-2xl flex flex-col flex-1 overflow-hidden transition-all duration-500 hover:shadow-purple-500/10 hover:border-purple-500/30">
             <div id="aiChatBox" class="flex-1 p-6 md:p-8 overflow-y-auto space-y-6 custom-scrollbar scroll-smooth">
                 <!-- AI Message -->

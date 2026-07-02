@@ -1,7 +1,12 @@
 <?php
 header('Content-Type: application/json');
 
-$GEMINI_API_KEY = "";
+$configPath = __DIR__ . '/../config.key.php';
+if (file_exists($configPath)) {
+    include $configPath;
+} else {
+    $GEMINI_API_KEY = "";
+}
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     echo json_encode(["error" => "Only POST method is allowed"]);
